@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Justin Bieber Slideshow</title>
 
   <style>
@@ -89,47 +88,18 @@
   </audio>
 
   <script>
-    const searchTerm = "filetype:bitmap Justin Bieber";
     const slideDuration = 4000;
 
-    let images = [];
+    let images = [
+      "https://upload.wikimedia.org/wikipedia/commons/d/da/Justin_Bieber_in_2015.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/1/1c/Justin_Bieber_2010_2.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/5/58/Justin_Bieber_%2843534498360%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/e/e8/Justin_Bieber_2012_NRJ_Music_Awards.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/6f/Justin_Bieber_at_Rosemont_Theatre%2C_Chicago%2C_2009.jpg"
+    ];
+
     let currentIndex = 0;
     let showingFirst = true;
-
-    async function fetchImages() {
-      const url =
-        "https://commons.wikimedia.org/w/api.php" +
-        "?origin=*" +
-        "&action=query" +
-        "&generator=search" +
-        "&gsrsearch=" + encodeURIComponent(searchTerm) +
-        "&gsrnamespace=6" +
-        "&gsrlimit=50" +
-        "&prop=imageinfo" +
-        "&iiprop=url" +
-        "&format=json";
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (!data.query || !data.query.pages) {
-        throw new Error("No images found.");
-      }
-
-      images = Object.values(data.query.pages)
-        .map(page => page.imageinfo?.[0]?.url)
-        .filter(url =>
-          url &&
-          /\.(jpg|jpeg|png|webp)$/i.test(url) &&
-          !url.toLowerCase().includes(".svg")
-        );
-
-      images = shuffle(images);
-
-      if (images.length === 0) {
-        throw new Error("No usable images found.");
-      }
-    }
 
     function shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
@@ -159,25 +129,17 @@
       showingFirst = !showingFirst;
     }
 
-    async function startSite() {
+    function startSite() {
       document.getElementById("startScreen").style.display = "none";
 
-      try {
-        await fetchImages();
+      const music = document.getElementById("music");
+      music.play().catch(() => {});
 
-        document.getElementById("music").play();
+      images = shuffle(images);
 
-        showNextImage();
-        setInterval(showNextImage, slideDuration);
-      } catch (error) {
-        document.body.innerHTML = `
-          <div style="color:white; padding:40px; text-align:center;">
-            <h1>Could not load images</h1>
-            <p>Try refreshing the page.</p>
-          </div>
-        `;
-      }
+      showNextImage();
+      setInterval(showNextImage, slideDuration);
     }
   </script>
 </body>
-</html>
+</html>>
